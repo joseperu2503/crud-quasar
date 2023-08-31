@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useToken } from "@/composables/useToken";
 
-const apiUrl = process.env.VUE_APP_API_URL
+const apiUrl = process.env.APP_API_URL
 
 const appApi = axios.create({
   baseURL: apiUrl,
