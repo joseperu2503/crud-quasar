@@ -1,5 +1,4 @@
 import { route } from 'quasar/wrappers';
-import { useToken } from '@/composables/useToken'
 
 import {
   createMemoryHistory,
@@ -33,28 +32,6 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
-
-  Router.beforeEach(async (to, from) => {
-    const { removeToken, validToken } = useToken()
-
-    if (to.meta?.requiresAuth) {
-      if (!validToken()) {
-        removeToken()
-        Router.push('/login');
-      }
-      return true;
-    }
-
-    if (to.meta?.redirect) {
-      if (validToken()) {
-        Router.push('/dashboard');
-      }
-      return true;
-    }
-
-    return true;
-  });
-
 
   return Router;
 });
