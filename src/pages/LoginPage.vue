@@ -9,13 +9,13 @@
           <q-card-section>
             <q-form @keydown.enter="login" class="q-gutter-md">
               <q-input v-model="loginForm.email" label="Email" :error="!!loginErrors.email"
-                :error-message="loginErrors.email?.[0]">
+                :error-message="loginErrors.email?.[0]" name="email">
                 <template v-slot:prepend>
                   <q-icon name="email" />
                 </template>
               </q-input>
               <q-input v-model="loginForm.password" label="Password" :type="showPassword ? 'text' : 'password'"
-                :error="!!loginErrors.password" :error-message="loginErrors.password?.[0]">
+                :error="!!loginErrors.password" :error-message="loginErrors.password?.[0]" name="password">
                 <template v-slot:prepend>
                   <q-icon name="lock" />
                 </template>
