@@ -5,11 +5,11 @@ import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import { LoginErrors, LoginForm } from '@/interfaces/login.interface';
 import { initRegisterForm } from '@/interfaces/register.interface';
-// import { useSnackbar } from '@/composables/useSnackbar';
+import { useQuasar } from 'quasar'
 
 export function useLogin() {
   const { saveToken } = useToken()
-  // const { openSnackbar } = useSnackbar()
+  const $q = useQuasar()
 
   const router = useRouter();
 
@@ -33,7 +33,7 @@ export function useLogin() {
         loginErrors.value = error.response.data.errors;
       }
       if (error.response?.status === 401) {
-        // openSnackbar('Invalid credentials. Please check your username and password.', 'error')
+        $q.notify({ type: 'negative', message: 'Invalid credentials. Please check your username and password.' })
       }
     }
     loading.value = false
