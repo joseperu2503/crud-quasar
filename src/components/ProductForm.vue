@@ -7,17 +7,17 @@
 
       <q-card-section class="q-pt-none">
         <q-form @keydown.enter="submit" class="q-gutter-md">
-          <q-input v-model="form.name" label="Name" :error="!!errors.name" :error-message="errors.name?.[0]">
+          <q-input v-model="form.name" label="Name" :error="!!errors.name" :error-message="errors.name?.[0]" />
 
-          </q-input>
-          <q-input v-model="form.price" label="Price" :error="!!errors.price" :error-message="errors.price?.[0]">
+          <q-input v-model="form.price" label="Price" :error="!!errors.price" :error-message="errors.price?.[0]"
+            type="number">
             <template v-slot:prepend>
               <q-icon name="attach_money" />
             </template>
           </q-input>
-          <q-input v-model="form.stock" label="Stock" :error="!!errors.stock" :error-message="errors.stock?.[0]">
+          <q-input v-model="form.stock" label="Stock" :error="!!errors.stock" :error-message="errors.stock?.[0]"
+            type="number" />
 
-          </q-input>
 
           <q-file multiple accept="image/png, image/jpeg" v-model="images" label="Images" :error="!!errors.images"
             :error-message="errors.images?.[0]">
@@ -42,7 +42,7 @@
           <q-btn label="Save" color="primary" @click="submit" />
         </div>
       </q-card-actions>
-      <q-inner-loading :showing="loading || submitLoading" label="Please wait..." label-class="text-primary"
+      <q-inner-loading :showing="loading" label="Please wait..." label-class="text-primary"
         label-style="font-size: 1.1em" />
     </q-card>
   </q-dialog>
@@ -53,7 +53,7 @@ import { ref, watch } from 'vue';
 import { appApi } from '@/api/appApi'
 import { ProductForm, ProductErrors } from '@/interfaces/product.interface'
 import { useUploadImage } from '@/composables/useUploadImage';
-// import { useSnackbar } from '@/composables/useSnackbar';
+import { useQuasar } from 'quasar'
 
 const props = defineProps(['showModal', 'productId']);
 const emit = defineEmits(['update:showModal', 'reloadData']);
@@ -67,7 +67,6 @@ const errors = ref<ProductErrors>({});
 const submitMethod = ref('')
 const urlMethod = ref('')
 const loading = ref(false)
-const submitLoading = ref(false)
 const images = ref<File[]>([])
 const title = ref('')
 const initForm = () => {
@@ -101,8 +100,9 @@ watch(images, async (newValue) => {
         form.value.images?.push(image.full_url_image)
       })
       images.value = []
-      // openSnackbar(response.message, 'info')
+      $q.notify({ type: 'positive', message: response.message })
     } catch (error) {
+      $q.notify({ type: 'negative', message: 'An error occurred while uploading images.' })
       images.value = []
     }
     loading.value = false
@@ -126,10 +126,10 @@ const loadProduct = async () => {
 
 }
 
-// const { openSnackbar } = useSnackbar()
+const $q = useQuasar()
 
 const submit = async () => {
-  submitLoading.value = true
+  loading.value = true
   try {
     let response = await appApi({
       method: submitMethod.value,
@@ -137,21 +137,29 @@ const submit = async () => {
       data: form.value
     })
     emit('reloadData')
-    // openSnackbar(response.data.message, 'success')
+    $q.notify({ type: 'positive', message: response.data.message })
     closeModal()
   } catch (error: any) {
     if (error.response?.status === 422) {
       errors.value = error.response.data.errors;
+    } else {
+      $q.notify({ type: 'negative', message: 'An error occurred. Please try again.' })
     }
   }
-  submitLoading.value = false
+  loading.value = false
 }
 
 const deleteProduct = async (id: number) => {
-  let response = await appApi.delete(`/products/${id}`)
-  // openSnackbar(response.data.message, 'success')
-  emit('reloadData')
-  closeModal()
+  loading.value = true
+  try {
+    let response = await appApi.delete(`/products/${id}`)
+    $q.notify({ type: 'positive', message: response.data.message })
+    emit('reloadData')
+    closeModal()
+  } catch (error: any) {
+    $q.notify({ type: 'negative', message: 'An error occurred. Please try again.' })
+  }
+  loading.value = false
 }
 
 </script>
