@@ -42,10 +42,13 @@
                 </template>
               </q-input>
             </q-form>
-            <q-btn label="Sign in" color="primary" class="q-mt-xl full-width" @click="register" :loading="loading" />
+            <q-btn label="Sign up" color="primary" class="q-mt-xl full-width" @click="register" :loading="loading" />
+            <div class="text-sm text-gray-600 flex gap-1.5 justify-center mt-6">
+              Already have an account?
+              <router-link to="/login" class="font-semibold hover:underline">Sign in</router-link>
+            </div>
           </q-card-section>
         </q-card>
-
       </q-page>
     </q-page-container>
   </q-layout>

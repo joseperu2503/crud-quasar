@@ -1,10 +1,14 @@
 <template>
   <q-layout>
     <q-page-container>
-      <q-page class="flex justify-center items-center">
-        <q-card class="q-pa-md q-ma-xl" style="width: 90%; max-width: 400px">
+      <q-page class="flex justify-center items-center px-5 py-16">
+        <q-card class="q-pa-md w-full max-w-md">
+          <div class="flex justify-center mb-6">
+            <q-img src="@/assets/quasar-logo.svg" class="w-32" />
+          </div>
           <q-card-section>
-            <div class="text-h6">Login</div>
+            <div class="text-2xl font-semibold text-gray-700">Welcome back!</div>
+            <div class="text-sm text-gray-600">Sign in to continue</div>
           </q-card-section>
           <q-card-section>
             <q-form @keydown.enter="login" class="q-gutter-md">
@@ -26,9 +30,12 @@
               </q-input>
             </q-form>
             <q-btn label="Login" color="primary" class="q-mt-xl full-width" @click="login" :loading="loading" />
+            <div class="text-sm text-gray-600 flex gap-1.5 justify-center mt-6">
+              Don't have an account?
+              <router-link to="/register" class="font-semibold hover:underline">Sign up</router-link>
+            </div>
           </q-card-section>
         </q-card>
-
       </q-page>
     </q-page-container>
   </q-layout>
