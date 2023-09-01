@@ -11,6 +11,7 @@ export default boot(({ router, store }) => {
         router.push('/login');
       }
       next();
+      return
     }
 
     if (to.meta?.redirect) {
@@ -18,6 +19,7 @@ export default boot(({ router, store }) => {
         router.push('/dashboard');
       }
       next();
+      return
     }
 
     next();
