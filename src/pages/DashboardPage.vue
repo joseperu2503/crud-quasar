@@ -1,14 +1,15 @@
 <template>
-  <q-page class="">
-    <div class="row">
-      <div v-for="(product, index) in products" :key="index" class="col-12 col-sm-4 col-md-3">
-        <q-card class="w-full">
-          <img :src="product.images[0]">
-          <q-card-section>
-            <div class="text-h6" @click="editProduct(product.id)">{{ product.name }}</div>
-          </q-card-section>
-        </q-card>
-      </div>
+  <q-page class="max-w-6xl mx-auto py-16 w-11/12">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-fit mx-auto">
+      <q-card class="w-full max-w-[300px]" v-for="(product, index) in products" :key="index">
+        <q-img :src="product.images[0]" height="300" class="cursor-pointer" @click="editProduct(product.id)" />
+        <q-card-section>
+          <div class="text-gray-600 font-semibold text-md cursor-pointer hover:underline truncate"
+            @click="editProduct(product.id)">
+            {{ product.name }}
+          </div>
+        </q-card-section>
+      </q-card>
     </div>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn fab icon="add" color="primary" @click="newProduct" />
@@ -55,11 +56,3 @@ const editProduct = (id: number) => {
 getProducts()
 
 </script>
-<style scoped>
-.q-page {
-  max-width: 1000px;
-  width: 95%;
-  margin: 0 auto;
-  padding: 60px 0;
-}
-</style>
