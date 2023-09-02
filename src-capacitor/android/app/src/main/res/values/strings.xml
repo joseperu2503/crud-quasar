@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Crud Quasar</string>
+    <string name="title_activity_main">Crud Quasar</string>
+    <string name="package_name">com.joseperezgil.crudquasar</string>
+    <string name="custom_url_scheme">com.joseperezgil.crudquasar</string>
+</resources>
