@@ -13,7 +13,7 @@
           <q-card-section>
             <q-form @keydown.enter="login" class="q-gutter-md">
               <q-input v-model="loginForm.email" label="Email" :error="!!loginErrors.email"
-                :error-message="loginErrors.email?.[0]" name="email">
+                :error-message="loginErrors.email?.[0]" name="email" type="email">
                 <template v-slot:prepend>
                   <q-icon name="email" />
                 </template>
