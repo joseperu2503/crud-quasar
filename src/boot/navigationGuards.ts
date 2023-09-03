@@ -11,8 +11,9 @@ export default boot(({ router, store }) => {
       if (!validToken()) {
         removeToken()
         router.push('/login');
+        return;
       }
-      setBackgroundColorPrimary()
+      // setBackgroundColorPrimary()
       next();
       return
     }
@@ -20,12 +21,26 @@ export default boot(({ router, store }) => {
     if (to.meta?.redirect) {
       if (validToken()) {
         router.push('/dashboard');
+        return;
       }
-      setBackgroundColorWhite()
+      // setBackgroundColorWhite()
       next();
       return
     }
-
     next();
+  })
+
+  router.afterEach((to, from) => {
+    const { setBackgroundColorWhite, setBackgroundColorPrimary } = useStatusBar()
+
+    if (to.meta?.requiresAuth) {
+      setBackgroundColorPrimary()
+      return
+    }
+
+    if (to.meta?.redirect) {
+      setBackgroundColorWhite()
+      return
+    }
   })
 })

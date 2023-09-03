@@ -25,13 +25,9 @@
 <script setup lang="ts">
 import { useLogout } from '@/composables/useLogout'
 const { logout } = useLogout()
-import { StatusBar, Style } from '@capacitor/status-bar';
-import { useQuasar } from 'quasar'
+// import { useStatusBar } from '@/composables/useStatusBar'
 
-const $q = useQuasar()
-$q.addressbarColor.set('#1976D2')
-if ($q.platform.is.nativeMobile) {
-  StatusBar.setBackgroundColor({ color: '#1976D2' });
-}
+// const { setBackgroundColorPrimary } = useStatusBar()
+// setBackgroundColorPrimary()
 
 </script>

@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { appApi } from '@/api/appApi'
 import { ProductForm, ProductErrors } from '@/interfaces/product.interface'
 import { useUploadImage } from '@/composables/useUploadImage';
