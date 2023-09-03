@@ -23,5 +23,6 @@
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
       <item name="windowSplashScreenAnimationDuration">1000</item>
       <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_icon</item>
+      <item name="android:windowSplashScreenBrandingImage">@drawable/ic_branding_image</item>
     </style>
 </resources>
