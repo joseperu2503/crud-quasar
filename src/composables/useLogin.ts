@@ -6,6 +6,7 @@ import { ref } from 'vue';
 import { LoginErrors, LoginForm } from '@/interfaces/login.interface';
 import { initRegisterForm } from '@/interfaces/register.interface';
 import { useQuasar } from 'quasar'
+import { Keyboard } from '@capacitor/keyboard';
 
 export function useLogin() {
   const { saveToken } = useToken()
@@ -24,6 +25,7 @@ export function useLogin() {
 
   const login = async () => {
     loading.value = true
+    Keyboard.hide()
     try {
       const response = await appApi.post("/login", loginForm.value)
       saveToken(response.data.access_token)

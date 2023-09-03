@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :modelValue="showModal" @before-show="openModal" @hide="closeModal">
+  <q-dialog :modelValue="showModal" @show="openModal" @hide="closeModal">
     <q-card style="width: 100%; max-width: 400px;">
       <q-card-section>
         <div class="text-h6">{{ title }}</div>
@@ -7,7 +7,8 @@
 
       <q-card-section class="q-pt-none">
         <q-form @keydown.enter="submit" class="q-gutter-sm">
-          <q-input v-model="form.name" label="Name" :error="!!errors.name" :error-message="errors.name?.[0]" />
+          <q-input v-model="form.name" label="Name" :error="!!errors.name" :error-message="errors.name?.[0]"
+            ref="nameInput" />
 
           <q-input v-model="form.price" label="Price" :error="!!errors.price" :error-message="errors.price?.[0]"
             type="number">
@@ -51,12 +52,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { appApi } from '@/api/appApi'
 import { ProductForm, ProductErrors } from '@/interfaces/product.interface'
 import { useUploadImage } from '@/composables/useUploadImage';
 import { useQuasar } from 'quasar'
 import { Camera, CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Keyboard } from '@capacitor/keyboard';
 
 const props = defineProps(['showModal', 'productId']);
 const emit = defineEmits(['update:showModal', 'reloadData']);
@@ -73,6 +75,7 @@ const loading = ref(false)
 const images = ref<File[]>([])
 const title = ref('')
 const slide = ref(1)
+const nameInput = ref<HTMLInputElement | null>(null)
 
 const initForm = () => {
   form.value = {
@@ -126,15 +129,16 @@ const loadProduct = async () => {
     title.value = 'New Product'
     submitMethod.value = 'post'
     urlMethod.value = `/products`
+    nameInput.value?.focus()
   }
   loading.value = false
-
 }
 
 const $q = useQuasar()
 
 const submit = async () => {
   loading.value = true
+  Keyboard.hide()
   try {
     let response = await appApi({
       method: submitMethod.value,

@@ -3,6 +3,7 @@ import { appApi } from '@/api/appApi'
 import { ref } from 'vue';
 import { useLogin } from '@/composables/useLogin';
 import { RegisterErrors, RegisterForm, initRegisterForm } from '@/interfaces/register.interface';
+import { Keyboard } from '@capacitor/keyboard';
 
 export function useRegister() {
 
@@ -16,6 +17,7 @@ export function useRegister() {
 
   const register = async () => {
     loading.value = true
+    Keyboard.hide()
     try {
       await appApi.post("/register", registerForm.value)
       loginForm.value = {
