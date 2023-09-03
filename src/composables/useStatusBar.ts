@@ -11,7 +11,7 @@ export function useStatusBar() {
     if ($q.platform.is.nativeMobile) {
       StatusBar.setBackgroundColor({ color: '#FFFFFF' });
       StatusBar.setStyle({ style: Style.Light })
-      StatusBar.setOverlaysWebView({ overlay: true });
+      StatusBar.setOverlaysWebView({ overlay: false });
     }
   }
 
