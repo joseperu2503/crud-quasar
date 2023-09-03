@@ -6,7 +6,7 @@
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <q-form @keydown.enter="submit" class="q-gutter-md">
+        <q-form @keydown.enter="submit" class="q-gutter-sm">
           <q-input v-model="form.name" label="Name" :error="!!errors.name" :error-message="errors.name?.[0]" />
 
           <q-input v-model="form.price" label="Price" :error="!!errors.price" :error-message="errors.price?.[0]"
@@ -18,16 +18,18 @@
           <q-input v-model="form.stock" label="Stock" :error="!!errors.stock" :error-message="errors.stock?.[0]"
             type="number" />
 
-
           <q-file multiple accept="image/png, image/jpeg" v-model="images" label="Images" :error="!!errors.images"
             :error-message="errors.images?.[0]">
             <template v-slot:prepend>
               <q-icon name="attach_file" />
             </template>
           </q-file>
+          <q-btn color="primary" icon="add_a_photo" label="Take a photo" @click="TakePhoto"
+            v-if="$q.platform.is.nativeMobile" outline rounded />
         </q-form>
-        <q-carousel animated :model-value="1" arrows navigation infinite v-if="form.images.length > 0" height="300px"
-          control-type="push" control-text-color="grey-7">
+        <q-carousel animated v-model="slide" arrows navigation infinite v-if="form.images.length > 0" height="300px"
+          control-type="push" control-text-color="grey-7" swipeable transition-prev="slide-right"
+          transition-next="slide-left">
           <q-carousel-slide :name="index + 1" v-for="(image, index) in form.images" :key="index">
             <q-img :src="image" style="height: 100%" fit="contain" />
           </q-carousel-slide>
@@ -38,7 +40,7 @@
         <q-btn outline color="red" icon="delete" v-if="productId" @click="deleteProduct(productId)" />
         <div v-else></div>
         <div>
-          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Cancel" color="primary" v-close-popup class="mr-2" />
           <q-btn label="Save" color="primary" @click="submit" />
         </div>
       </q-card-actions>
@@ -54,6 +56,7 @@ import { appApi } from '@/api/appApi'
 import { ProductForm, ProductErrors } from '@/interfaces/product.interface'
 import { useUploadImage } from '@/composables/useUploadImage';
 import { useQuasar } from 'quasar'
+import { Camera, CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 
 const props = defineProps(['showModal', 'productId']);
 const emit = defineEmits(['update:showModal', 'reloadData']);
@@ -69,6 +72,8 @@ const urlMethod = ref('')
 const loading = ref(false)
 const images = ref<File[]>([])
 const title = ref('')
+const slide = ref(1)
+
 const initForm = () => {
   form.value = {
     name: '',
@@ -160,6 +165,29 @@ const deleteProduct = async (id: number) => {
     $q.notify({ type: 'negative', message: 'An error occurred. Please try again.' })
   }
   loading.value = false
+}
+
+const TakePhoto = async () => {
+  try {
+    const photo = await Camera.getPhoto({
+      quality: 100,
+      allowEditing: false,
+      resultType: CameraResultType.Uri,
+      direction: CameraDirection.Rear,
+      source: CameraSource.Camera
+    })
+
+    if (photo && photo.webPath) {
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+
+      const file = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
+
+      images.value = [file]
+    }
+  } catch (error) {
+
+  }
 }
 
 </script>

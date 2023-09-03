@@ -1,8 +1,8 @@
 <template>
   <q-layout>
     <q-page-container>
-      <q-page class="flex justify-center items-center">
-        <q-card class="q-pa-md q-ma-xl" style="width: 90%; max-width: 400px">
+      <q-page class="flex justify-center items-center px-5 py-16">
+        <q-card class="q-pa-md w-full max-w-md">
           <q-card-section>
             <div class="text-h6">Register</div>
           </q-card-section>
