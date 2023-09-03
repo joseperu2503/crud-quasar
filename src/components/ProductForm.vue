@@ -94,6 +94,7 @@ const openModal = () => {
 }
 
 const closeModal = () => {
+  initForm()
   emit('update:showModal', false)
 }
 
