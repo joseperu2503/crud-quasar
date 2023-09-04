@@ -1,11 +1,11 @@
 import { boot } from 'quasar/wrappers'
 import { useToken } from '@/composables/useToken'
 import { useStatusBar } from '@/composables/useStatusBar'
+import { SplashScreen } from '@capacitor/splash-screen';
 
 export default boot(({ router, store }) => {
   router.beforeEach((to, from, next) => {
     const { removeToken, validToken } = useToken()
-    const { setBackgroundColorWhite, setBackgroundColorPrimary } = useStatusBar()
 
     if (to.meta?.requiresAuth) {
       if (!validToken()) {
@@ -13,7 +13,6 @@ export default boot(({ router, store }) => {
         router.push('/login');
         return;
       }
-      // setBackgroundColorPrimary()
       next();
       return
     }
@@ -23,23 +22,24 @@ export default boot(({ router, store }) => {
         router.push('/dashboard');
         return;
       }
-      // setBackgroundColorWhite()
       next();
       return
     }
     next();
   })
 
-  router.afterEach((to, from) => {
+  router.afterEach(async (to, from) => {
     const { setBackgroundColorWhite, setBackgroundColorPrimary } = useStatusBar()
 
     if (to.meta?.requiresAuth) {
       setBackgroundColorPrimary()
+      SplashScreen.hide();
       return
     }
 
     if (to.meta?.redirect) {
       setBackgroundColorWhite()
+      SplashScreen.hide();
       return
     }
   })
