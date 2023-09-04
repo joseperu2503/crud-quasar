@@ -2,8 +2,8 @@
   <div class="mb-6 w-32 aspect-square mx-auto">
     <img src="@/assets/quasar-logo.svg" alt="quasar-icon">
   </div>
-  <div class="text-2xl font-semibold text-gray-700">Welcome back!</div>
-  <div class="text-sm text-gray-600">Sign in to continue</div>
+  <div class="text-2xl font-semibold text-gray-700 text-center">Welcome back!</div>
+  <div class="text-sm text-gray-600 text-center">Sign in to continue</div>
   <q-form @keydown.enter="login" class="q-gutter-xs mt-4">
     <q-input v-model="loginForm.email" label="Email" :error="!!loginErrors.email" :error-message="loginErrors.email?.[0]"
       name="email" type="email">
