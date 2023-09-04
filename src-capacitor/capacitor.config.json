@@ -3,10 +3,6 @@
   "appName": "Crud Quasar",
   "npmClient": "npm",
   "webDir": "www",
-  "server": {
-    "androidScheme": "https",
-    "url": "http://192.168.1.8:9500"
-  },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 7000,
