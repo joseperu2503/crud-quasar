@@ -5,7 +5,7 @@ import { useQuasar } from 'quasar'
 export function useStatusBar() {
 
   const $q = useQuasar()
-  // $q.addressbarColor.set('#1976D2')
+  $q.addressbarColor.set('#1976D2')
 
   const setBackgroundColorWhite = async () => {
     if ($q.platform.is.nativeMobile) {
