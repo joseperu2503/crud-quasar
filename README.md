@@ -43,3 +43,6 @@ quasar build
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
 
 icongenie generate -m capacitor -i ./icon/icon.png --skip-trim --padding 80,80
+
+quasar dev -m capacitor -T android
+quasar build -m capacitor -T android
