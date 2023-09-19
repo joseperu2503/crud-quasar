@@ -25,7 +25,18 @@
             <q-td> {{ props.row.price }}</q-td>
             <q-td> {{ props.row.stock }}</q-td>
             <q-td> {{ props.row.created_at }}</q-td>
-            <q-td> </q-td>
+            <q-td> <q-btn color="primary" icon="more_vert" round flat>
+                <q-menu>
+                  <q-list style="min-width: 100px">
+                    <q-item clickable v-close-popup>
+                      <q-item-section @click="editProduct(props.row.id)">Edit</q-item-section>
+                    </q-item>
+                    <q-item clickable v-close-popup>
+                      <q-item-section @click="onDeleteProduct(props.row.id)">Delete</q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn></q-td>
           </q-tr>
         </template>
       </q-table>
@@ -36,15 +47,7 @@
           @update:modelValue="getProducts" direction-links />
       </div>
       <div class="grid-products justify-center gap-4 mt-8">
-        <q-card class="w-full " v-for="(product, index) in products" :key="index">
-          <q-img :src="product.images[0]" height="300" class="cursor-pointer" @click="editProduct(product.id)" />
-          <q-card-section>
-            <div class="text-gray-600 font-semibold text-md cursor-pointer hover:underline truncate"
-              @click="editProduct(product.id)">
-              {{ product.name }}
-            </div>
-          </q-card-section>
-        </q-card>
+        <ProductCard :product="product" v-for="product in products" :key="product.id" @edit="editProduct(product.id)" />
       </div>
       <q-page-sticky position="bottom-right" :offset="[18, 18]">
         <q-btn fab icon="add" color="primary" @click="newProduct" />
@@ -62,11 +65,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { appApi } from '@/api/appApi'
 import { Product } from '@/interfaces/product.interface'
 import ProductForm from '@/components/ProductForm.vue';
-import { ResponsePaginate } from '@/interfaces/responsePaginate.interface';
+import { useProduct } from '@/composables/useProduct';
+import ProductCard from '@/components/ProductCard.vue';
 
+const $useProduct = useProduct()
 const products = ref<Product[]>([])
 const showModal = ref(false)
 const loading = ref(false)
@@ -75,6 +79,7 @@ const pagination = ref({
   currentPage: 1,
   totalPages: 10,
 })
+
 const newProduct = () => {
   productId.value = null
   showModal.value = true
@@ -83,12 +88,7 @@ const newProduct = () => {
 const getProducts = async () => {
   loading.value = true
   try {
-    const response = await appApi.get<ResponsePaginate<Product>>("/my-products", {
-      params: {
-        page: pagination.value.currentPage
-      }
-    })
-    const myProductsResponse = response.data
+    const myProductsResponse = await $useProduct.getProducts(pagination.value.currentPage)
     products.value = myProductsResponse.data
     pagination.value = {
       currentPage: myProductsResponse.meta.current_page,
@@ -102,6 +102,16 @@ const getProducts = async () => {
 const editProduct = (id: number) => {
   productId.value = id
   showModal.value = true
+}
+
+const onDeleteProduct = async (id: number) => {
+  loading.value = true
+  try {
+    await $useProduct.deleteProduct(id)
+    getProducts()
+  } catch (error: any) {
+  }
+  loading.value = false
 }
 
 const isGridView = ref(false)

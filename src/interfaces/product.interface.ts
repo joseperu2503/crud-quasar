@@ -29,6 +29,7 @@ export interface ProductErrors {
 }
 
 export interface ProductForm {
+  id?: number;
   name: string | null;
   description: string | null;
   price: number | null;
@@ -66,3 +67,25 @@ export interface Brand {
   id: number;
   name: string;
 }
+
+export const ProductToProductForm = (product: Product): ProductForm => {
+  return {
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    stock: product.stock,
+    images: product.images,
+    colors: product.colors,
+    genders: product.genders.map(gender => gender.id),
+    sizes: product.sizes.map(size => size.id),
+    brand_id: product.brand ? product.brand.id : null,
+    category_id: product.category ? product.category.id : null,
+    free_shipping: product.free_shipping
+  }
+}
+
+export interface ProductOperationResponse {
+  success: boolean;
+  message: string;
+};

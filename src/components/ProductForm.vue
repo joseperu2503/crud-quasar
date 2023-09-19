@@ -31,7 +31,6 @@
               :error-message="errors.genders?.[0]" :error="!!errors.genders" emit-value map-options multiple />
             <q-select v-model="form.sizes" :options="sizes" label="Sizes" option-value="id" option-label="name"
               :error-message="errors.sizes?.[0]" :error="!!errors.sizes" emit-value map-options multiple />
-
           </div>
           <div>
             <div class="text-h6 mb-4 font-base">Colors</div>
@@ -80,7 +79,7 @@
       </q-card-section>
 
       <q-card-actions :align="productId ? 'between' : 'right'">
-        <q-btn outline color="red" icon="delete" v-if="productId" @click="deleteProduct(productId)" />
+        <q-btn outline color="red" icon="delete" v-if="productId" @click="onDelete(productId)" />
         <div>
           <q-btn flat label="Cancel" color="primary" v-close-popup class="mr-2" />
           <q-btn label="Save" color="primary" @click="submit" />
@@ -102,8 +101,9 @@ import { useQuasar } from 'quasar'
 import { Camera, CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Keyboard } from '@capacitor/keyboard';
 import { Brand, Category, Size, Gender } from '@/interfaces/product.interface';
-import { ProductFormDataResponse } from '@/interfaces/product.interface';
+import { ProductFormDataResponse, ProductToProductForm } from '@/interfaces/product.interface';
 import ColorPickerModal from '@/components/ColorPickerModal.vue'
+import { useProduct } from '@/composables/useProduct';
 
 const props = defineProps(['showModal', 'productId']);
 const emit = defineEmits(['update:showModal', 'reloadData']);
@@ -120,14 +120,14 @@ const form = ref<ProductForm>({
   genders: [],
   sizes: []
 })
+
 const errors = ref<ProductErrors>({});
-const submitMethod = ref('')
-const urlMethod = ref('')
 const loading = ref(false)
 const images = ref<File[]>([])
 const title = ref('')
 const slide = ref(1)
 const nameInput = ref<HTMLInputElement | null>(null)
+const $useProduct = useProduct()
 
 const initForm = () => {
   form.value = {
@@ -181,14 +181,10 @@ const loadProduct = async () => {
   loading.value = true
   if (props.productId) {
     title.value = 'Edit Product'
-    submitMethod.value = 'put'
-    urlMethod.value = `/products/${props.productId}`
-    let response = await appApi.get(`/products/${props.productId}`)
-    form.value = response.data
+    const productResponse = await $useProduct.getProduct(props.productId)
+    form.value = ProductToProductForm(productResponse)
   } else {
     title.value = 'New Product'
-    submitMethod.value = 'post'
-    urlMethod.value = `/products`
     nameInput.value?.focus()
   }
   await loadFormData()
@@ -203,13 +199,12 @@ const submit = async () => {
     Keyboard.hide()
   }
   try {
-    let response = await appApi({
-      method: submitMethod.value,
-      url: urlMethod.value,
-      data: form.value
-    })
+    if (props.productId) {
+      await $useProduct.updateProduct(props.productId, form.value)
+    } else {
+      await $useProduct.createProduct(form.value)
+    }
     emit('reloadData')
-    $q.notify({ type: 'positive', message: response.data.message })
     closeModal()
   } catch (error: any) {
     if (error.response?.status === 422) {
@@ -221,16 +216,13 @@ const submit = async () => {
   loading.value = false
 }
 
-const deleteProduct = async (id: number) => {
+const onDelete = async (id: number) => {
   loading.value = true
   try {
-    let response = await appApi.delete(`/products/${id}`)
-    $q.notify({ type: 'positive', message: response.data.message })
+    await $useProduct.deleteProduct(id)
     emit('reloadData')
     closeModal()
-  } catch (error: any) {
-    $q.notify({ type: 'negative', message: 'An error occurred. Please try again.' })
-  }
+  } catch (error: any) { }
   loading.value = false
 }
 
@@ -247,13 +239,10 @@ const TakePhoto = async () => {
     if (photo && photo.webPath) {
       const response = await fetch(photo.webPath);
       const blob = await response.blob();
-
       const file = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
-
       images.value = [file]
     }
   } catch (error) {
-
   }
 }
 
