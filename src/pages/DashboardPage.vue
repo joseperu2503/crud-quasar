@@ -1,5 +1,5 @@
 <template>
-  <q-page class="max-w-6xl mx-auto py-16 w-11/12">
+  <q-page class="max-w-6xl mx-auto py-8 w-11/12">
     <div class="flex justify-between">
       <div class="text-h6">My products</div>
       <q-btn :icon="isGridView ? 'grid_view' : 'toc'" flat round @click="isGridView = !isGridView" />

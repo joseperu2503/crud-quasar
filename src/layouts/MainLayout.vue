@@ -5,6 +5,7 @@
         <q-toolbar-title>
           Crud Quasar
         </q-toolbar-title>
+        <q-btn flat round dense :icon="$q.dark.mode ? 'dark_mode' : 'light_mode'" class="q-mr-xs" @click="toggleTheme" />
         <q-btn flat round dense icon="person">
           <q-menu>
             <q-list style="min-width: 100px">
@@ -24,10 +25,11 @@
 
 <script setup lang="ts">
 import { useLogout } from '@/composables/useLogout'
+import { useQuasar } from 'quasar'
 const { logout } = useLogout()
-// import { useStatusBar } from '@/composables/useStatusBar'
+const $q = useQuasar()
 
-// const { setBackgroundColorPrimary } = useStatusBar()
-// setBackgroundColorPrimary()
-
+const toggleTheme = () => {
+  $q.dark.toggle()
+}
 </script>
