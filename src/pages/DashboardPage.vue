@@ -1,6 +1,5 @@
 <template>
   <q-page class="max-w-6xl mx-auto py-16 w-11/12">
-
     <div class="flex justify-between">
       <div class="text-h6">My products</div>
       <q-btn :icon="isGridView ? 'grid_view' : 'toc'" flat round @click="isGridView = !isGridView" />
@@ -10,7 +9,7 @@
       <q-table :rows="products" row-key="id" :loading="loading" hide-pagination flat
         :rows-per-page-options="[products.length]">
         <template v-slot:header="props">
-          <q-tr :props="props">
+          <q-tr :props="props" class="text-left">
             <q-th>ID</q-th>
             <q-th>Name</q-th>
             <q-th>Price</q-th>
@@ -21,12 +20,12 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-th> {{ props.row.id }}</q-th>
-            <q-th> {{ props.row.name }}</q-th>
-            <q-th> {{ props.row.price }}</q-th>
-            <q-th> {{ props.row.stock }}</q-th>
-            <q-th> {{ props.row.created_at }}</q-th>
-            <q-th> </q-th>
+            <q-td> {{ props.row.id }}</q-td>
+            <q-td> {{ props.row.name }}</q-td>
+            <q-td> {{ props.row.price }}</q-td>
+            <q-td> {{ props.row.stock }}</q-td>
+            <q-td> {{ props.row.created_at }}</q-td>
+            <q-td> </q-td>
           </q-tr>
         </template>
       </q-table>
