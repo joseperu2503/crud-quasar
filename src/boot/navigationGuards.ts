@@ -1,24 +1,24 @@
 import { boot } from 'quasar/wrappers'
-import { useToken } from '@/composables/useToken'
 import { useStatusBar } from '@/composables/useStatusBar'
 import { SplashScreen } from '@capacitor/splash-screen';
+import { useAuth } from '@/composables/useAuth';
 
 export default boot(({ router, store }) => {
   router.beforeEach((to, from, next) => {
-    const { removeToken, validToken } = useToken()
+    const { verifyAuth } = useAuth()
+    const isValid = verifyAuth()
 
     if (to.meta?.requiresAuth) {
-      if (!validToken()) {
-        removeToken()
+      if (!isValid) {
         router.push('/login');
-        return;
+        return
       }
       next();
       return
     }
 
     if (to.meta?.redirect) {
-      if (validToken()) {
+      if (isValid) {
         router.push('/dashboard');
         return;
       }

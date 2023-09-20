@@ -3,7 +3,19 @@ import jwt_decode from 'jwt-decode'
 import type { JwtPayload } from 'jwt-decode'
 
 interface JwtResponse extends JwtPayload {
+  name: string;
+  id: number;
+  email: string;
+}
 
+interface ValidToken {
+  isValid: true;
+  decodedToken: JwtResponse;
+}
+
+interface InvalidToken {
+  isValid: false;
+  decodedToken: null;
 }
 
 export function useToken() {
@@ -21,19 +33,32 @@ export function useToken() {
     removeCookie('token')
   }
 
-  const validToken = () => {
+  const validateToken = (): ValidToken | InvalidToken => {
+
     const decodedToken = decodeToken()
     if (!decodedToken) {
-      return false
+      return {
+        isValid: false,
+        decodedToken: null
+      }
     }
 
     if (decodedToken && decodedToken?.exp) {
       const tokenDate = new Date(0)
       tokenDate.setUTCSeconds(decodedToken.exp)
       const today = new Date()
-      return tokenDate.getTime() > today.getTime()
+
+      if (tokenDate.getTime() > today.getTime()) {
+        return {
+          isValid: true,
+          decodedToken: decodedToken
+        }
+      }
     }
-    return false
+    return {
+      isValid: false,
+      decodedToken: null
+    }
   }
 
   const decodeToken = () => {
@@ -49,7 +74,8 @@ export function useToken() {
     saveToken,
     getToken,
     removeToken,
-    validToken,
+    validateToken,
     decodeToken
   }
 }
+
