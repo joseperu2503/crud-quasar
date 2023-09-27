@@ -69,12 +69,14 @@ import { Product } from '@/interfaces/product.interface'
 import ProductForm from '@/components/ProductForm.vue';
 import { useProduct } from '@/composables/useProduct';
 import ProductCard from '@/components/ProductCard.vue';
+import { useQuasar } from 'quasar';
 
 const $useProduct = useProduct()
 const products = ref<Product[]>([])
 const showModal = ref(false)
 const loading = ref(false)
 const productId = ref<number | null>(null)
+const $q = useQuasar()
 const pagination = ref({
   currentPage: 1,
   totalPages: 10,
@@ -88,13 +90,14 @@ const newProduct = () => {
 const getProducts = async () => {
   loading.value = true
   try {
-    const myProductsResponse = await $useProduct.getProducts(pagination.value.currentPage)
+    const myProductsResponse = await $useProduct.getMyProducts(pagination.value.currentPage)
     products.value = myProductsResponse.data
     pagination.value = {
       currentPage: myProductsResponse.meta.current_page,
       totalPages: myProductsResponse.meta.last_page
     }
   } catch (error) {
+    $q.notify({ type: 'negative', message: 'An error occurred while loading the products.' })
   }
   loading.value = false
 }
@@ -107,11 +110,13 @@ const editProduct = (id: number) => {
 const onDeleteProduct = async (id: number) => {
   loading.value = true
   try {
-    await $useProduct.deleteProduct(id)
+    const response = await $useProduct.deleteProduct(id)
+    $q.notify({ type: 'positive', message: response.message })
     getProducts()
   } catch (error: any) {
+    loading.value = false
+    $q.notify({ type: 'negative', message: 'An error occurred. Please try again.' })
   }
-  loading.value = false
 }
 
 const isGridView = ref(false)

@@ -94,14 +94,13 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { appApi } from '@/api/appApi'
-import { ProductForm, ProductErrors } from '@/interfaces/product.interface'
+import { ProductForm, ProductErrors, ProductOperationResponse } from '@/interfaces/product.interface'
 import { useUploadImage } from '@/composables/useUploadImage';
 import { useQuasar } from 'quasar'
 import { Camera, CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Keyboard } from '@capacitor/keyboard';
 import { Brand, Category, Size, Gender } from '@/interfaces/product.interface';
-import { ProductFormDataResponse, ProductToProductForm } from '@/interfaces/product.interface';
+import { ProductToProductForm } from '@/interfaces/product.interface';
 import ColorPickerModal from '@/components/ColorPickerModal.vue'
 import { useProduct } from '@/composables/useProduct';
 
@@ -181,8 +180,13 @@ const loadProduct = async () => {
   loading.value = true
   if (props.productId) {
     title.value = 'Edit Product'
-    const productResponse = await $useProduct.getProduct(props.productId)
-    form.value = ProductToProductForm(productResponse)
+    try {
+      const productResponse = await $useProduct.getProduct(props.productId)
+      form.value = ProductToProductForm(productResponse)
+    } catch (error) {
+      $q.notify({ type: 'negative', message: 'An error occurred. Please try again.' })
+    }
+
   } else {
     title.value = 'New Product'
     nameInput.value?.focus()
@@ -199,11 +203,13 @@ const submit = async () => {
     Keyboard.hide()
   }
   try {
+    let response: ProductOperationResponse
     if (props.productId) {
-      await $useProduct.updateProduct(props.productId, form.value)
+      response = await $useProduct.updateProduct(props.productId, form.value)
     } else {
-      await $useProduct.createProduct(form.value)
+      response = await $useProduct.createProduct(form.value)
     }
+    $q.notify({ type: 'positive', message: response.message })
     emit('reloadData')
     closeModal()
   } catch (error: any) {
@@ -219,10 +225,13 @@ const submit = async () => {
 const onDelete = async (id: number) => {
   loading.value = true
   try {
-    await $useProduct.deleteProduct(id)
+    const response = await $useProduct.deleteProduct(id)
+    $q.notify({ type: 'positive', message: response.message })
     emit('reloadData')
     closeModal()
-  } catch (error: any) { }
+  } catch (error: any) {
+    $q.notify({ type: 'negative', message: 'An error occurred. Please try again.' })
+  }
   loading.value = false
 }
 
@@ -252,8 +261,8 @@ const sizes = ref<Size[]>([])
 const genders = ref<Gender[]>([])
 
 const loadFormData = async () => {
-  const response = await appApi.get<ProductFormDataResponse>(`/products/form-data`)
-  const formData = response.data
+  const response = await $useProduct.getFormData()
+  const formData = response
   brands.value = formData.brands
   categories.value = formData.categories
   sizes.value = formData.sizes

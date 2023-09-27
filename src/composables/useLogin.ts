@@ -25,7 +25,11 @@ export function useLogin() {
 
   const login = async () => {
     loading.value = true
-    Keyboard.hide()
+
+    if ($q.platform.is.capacitor) {
+      Keyboard.hide()
+    }
+
     try {
       const response = await appApi.post("/login", loginForm.value)
       saveToken(response.data.access_token)
