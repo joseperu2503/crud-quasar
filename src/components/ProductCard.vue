@@ -1,19 +1,19 @@
 <template>
   <q-card class="w-full ">
-    <q-img :src="product.images[0]" height="300px" class="cursor-pointer" @click="editProduct()" fit="contain"
+    <q-img :src="product.images[0]" height="250px" class="cursor-pointer" @click="editProduct()" fit="contain"
       v-if="product.images[0]">
       <template v-slot:error>
-        <q-img src="/no-image.jpg" height="300px" />
+        <q-img src="/no-image.jpg" height="250px" />
       </template>
     </q-img>
-    <q-img src="/no-image.jpg" height="300px" @click="editProduct()" v-else />
+    <q-img src="/no-image.jpg" height="250px" @click="editProduct()" v-else />
     <q-card-section>
       <div class="text-gray-600 font-semibold text-lg cursor-pointer hover:underline truncate" @click="editProduct()">
         {{ product.name }}
       </div>
     </q-card-section>
-    <q-card-section class="pt-0">
-      {{ product.description }}
+    <q-card-section class="pt-0 ">
+      <span class="line-clamp-2"> {{ product.description }}</span>
     </q-card-section>
     <q-separator class="mb-2"></q-separator>
     <q-card-section class="q-pt-none">
